@@ -37,6 +37,7 @@ namespace HW_Lib_Test
             this.FriendlyName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.HardwareId = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.listdevices = new System.Windows.Forms.ListView();
+            this.Status = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.SuspendLayout();
             // 
             // button1
@@ -71,35 +72,43 @@ namespace HW_Lib_Test
             // CommonName
             // 
             this.CommonName.Text = "Name";
-            this.CommonName.Width = 272;
+            this.CommonName.Width = 236;
             // 
             // FriendlyName
             // 
             this.FriendlyName.Text = "Friendly Name";
-            this.FriendlyName.Width = 299;
+            this.FriendlyName.Width = 235;
             // 
             // HardwareId
             // 
             this.HardwareId.Text = "Hardware Id";
-            this.HardwareId.Width = 283;
+            this.HardwareId.Width = 270;
             // 
             // listdevices
             // 
             this.listdevices.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.CommonName,
             this.FriendlyName,
-            this.HardwareId});
+            this.HardwareId,
+            this.Status});
             this.listdevices.FullRowSelect = true;
             this.listdevices.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
             listViewItem1,
             listViewItem2});
-            this.listdevices.Location = new System.Drawing.Point(34, 31);
+            this.listdevices.Location = new System.Drawing.Point(34, 26);
+            this.listdevices.MultiSelect = false;
             this.listdevices.Name = "listdevices";
             this.listdevices.Size = new System.Drawing.Size(858, 615);
             this.listdevices.TabIndex = 5;
             this.listdevices.UseCompatibleStateImageBehavior = false;
             this.listdevices.View = System.Windows.Forms.View.Details;
             this.listdevices.SelectedIndexChanged += new System.EventHandler(this.listdevices_SelectedIndexChanged);
+            // 
+            // Status
+            // 
+            this.Status.Text = "Status";
+            this.Status.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.Status.Width = 93;
             // 
             // Form1
             // 
@@ -127,6 +136,7 @@ namespace HW_Lib_Test
         private System.Windows.Forms.ColumnHeader FriendlyName;
         private System.Windows.Forms.ColumnHeader HardwareId;
         private System.Windows.Forms.ListView listdevices;
+        private System.Windows.Forms.ColumnHeader Status;
     }
 }
 

@@ -2,18 +2,19 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 /*
- * HardwareHelperLib
- * ===========================================================
- * Windows XP SP2, VS2005 C#.NET, DotNet 2.0
- * HH Lib is a hardware helper for library for C#.
- * It can be used for notifications of hardware add/remove
- * events, retrieving a list of hardware currently connected,
- * and enabling or disabling devices.
- * ===========================================================
- * LOG:      Who?    When?       What?
- * (v)1.0.0  WJF     11/26/07    Original Implementation
- */
+* HardwareHelperLib
+* ===========================================================
+* Windows XP SP2, VS2005 C#.NET, DotNet 2.0
+* HH Lib is a hardware helper for library for C#.
+* It can be used for notifications of hardware add/remove
+* events, retrieving a list of hardware currently connected,
+* and enabling or disabling devices.
+* ===========================================================
+* LOG:      Who?    When?       What?
+* (v)1.0.0  WJF     11/26/07    Original Implementation
+*/
 namespace HardwareHelperLib
 {
     #region Unmanaged
@@ -43,7 +44,14 @@ namespace HardwareHelperLib
 
         [DllImport("setupapi.dll", CharSet = CharSet.Auto)]
         public static extern Boolean SetupDiCallClassInstaller(UInt32 InstallFunction,IntPtr DeviceInfoSet, IntPtr DeviceInfoData);
-        
+
+        // devInst is an uint32 - this matters on 64-bit
+        [DllImport("setupapi.dll", SetLastError = true)]
+        public static extern int CM_Get_DevNode_Status(out UInt32 status, out UInt32 probNum, UInt32 devInst, int flags);
+
+        [DllImport("setupapi.dll", SetLastError = true)]
+        public static extern bool SetupDiChangeState(IntPtr deviceInfoSet, [In] ref SP_DEVINFO_DATA deviceInfoData);
+
         // Structure with information for RegisterDeviceNotification.
         [StructLayout(LayoutKind.Sequential)]
         public struct DEV_BROADCAST_HANDLE
@@ -128,6 +136,35 @@ namespace HardwareHelperLib
         public const int DICS_FLAG_CONFIGSPECIFIC = (0x00000002);
         public const int DICS_ENABLE = (0x00000001);
         public const int DICS_DISABLE = (0x00000002);
+
+        public const int DN_ROOT_ENUMERATED = 0x00000001;	/* Was enumerated by ROOT */
+        public const int DN_DRIVER_LOADED = 0x00000002;	/* Has Register_Device_Driver */
+        public const int DN_ENUM_LOADED		= 0x00000004;	/* Has Register_Enumerator */
+        public const int DN_STARTED		= 0x00000008;	/* Is currently configured */
+        public const int DN_MANUAL		= 0x00000010;	/* Manually installed */
+        public const int DN_NEED_TO_ENUM		= 0x00000020;	/* May need reenumeration */
+        public const int DN_NOT_FIRST_TIME	= 0x00000040;	/* Has received a config */
+        public const int DN_HARDWARE_ENUM	= 0x00000080;	/* Enum generates hardware ID */
+        public const int DN_LIAR			= 0x00000100;	/* Lied about can reconfig once */
+        public const int DN_HAS_MARK		= 0x00000200;	/* Not CM_Create_DevNode lately */
+        public const int DN_HAS_PROBLEM		= 0x00000400;	/* Need device installer */
+        public const int DN_FILTERED		= 0x00000800;	/* Is filtered */
+        public const int DN_MOVED		= 0x00001000;	/* Has been moved */
+        public const int DN_DISABLEABLE		= 0x00002000;	/* Can be rebalanced */
+        public const int DN_REMOVABLE		= 0x00004000;	/* Can be removed */
+        public const int DN_PRIVATE_PROBLEM	= 0x00008000;	/* Has a private problem */
+        public const int DN_MF_PARENT		= 0x00010000;	/* Multi function parent */
+        public const int DN_MF_CHILD		= 0x00020000;	/* Multi function child */
+        public const int DN_WILL_BE_REMOVED	= 0x00040000;	/* Devnode is being removed */
+
+        public const int CR_SUCCESS = 0x00000000;
+    }
+
+    public enum DeviceStatus
+    {
+        Unknown,
+        Enabled,
+        Disabled
     }
 
     public struct DEVICE_INFO
@@ -135,6 +172,8 @@ namespace HardwareHelperLib
         public string name;
         public string friendlyName;
         public string hardwareId;
+        public string statusstr;
+        public DeviceStatus status;
     }
 
     #endregion
@@ -164,22 +203,18 @@ namespace HardwareHelperLib
             {
                 Guid myGUID = System.Guid.Empty;
                 IntPtr hDevInfo = Native.SetupDiGetClassDevs(ref myGUID, 0, IntPtr.Zero, Native.DIGCF_ALLCLASSES | Native.DIGCF_PRESENT);
-                if (hDevInfo.ToInt32() == Native.INVALID_HANDLE_VALUE)
-                {
+                if (hDevInfo.ToInt64() == Native.INVALID_HANDLE_VALUE)
                     throw new Exception("Invalid Handle");
-                }
                 Native.SP_DEVINFO_DATA DeviceInfoData;
                 DeviceInfoData = new Native.SP_DEVINFO_DATA();
+
                 //for 32-bit, IntPtr.Size = 4
                 //for 64-bit, IntPtr.Size = 8
                 if (IntPtr.Size == 4)
-                {
                     DeviceInfoData.cbSize = 28;
-                }//if
                 else if (IntPtr.Size == 8)
-                {
                     DeviceInfoData.cbSize = 32;
-                }//if
+
                 //is devices exist for class
                 DeviceInfoData.devInst = 0;
                 DeviceInfoData.classGuid = System.Guid.Empty;
@@ -198,7 +233,13 @@ namespace HardwareHelperLib
                     Native.SetupDiGetDeviceRegistryProperty(hDevInfo, DeviceInfoData, Native.SPDRP_FRIENDLYNAME, 0, DeviceFriendlyName, Native.MAX_DEV_LEN, IntPtr.Zero);
                     Native.SetupDiGetDeviceRegistryProperty(hDevInfo, DeviceInfoData, Native.SPDRP_HARDWAREID, 0, DeviceHardwareId, Native.MAX_DEV_LEN, IntPtr.Zero);
 
-                    HWList.Add(new DEVICE_INFO { name = DeviceName.ToString(), friendlyName = DeviceFriendlyName.ToString(), hardwareId = DeviceHardwareId.ToString() });
+                    UInt32 status, problem;
+                    string dstatustr = "";
+                    DeviceStatus deviceStatus = DeviceStatus.Unknown;
+                    if (Native.CM_Get_DevNode_Status(out status, out problem, i, 0) == Native.CR_SUCCESS)
+                        deviceStatus = ((status & Native.DN_DISABLEABLE) > 0) ? DeviceStatus.Enabled : DeviceStatus.Disabled;
+
+                    HWList.Add(new DEVICE_INFO { name = DeviceName.ToString(), friendlyName = DeviceFriendlyName.ToString(), hardwareId = DeviceHardwareId.ToString(), status = deviceStatus, statusstr = dstatustr });
                 }
                 Native.SetupDiDestroyDeviceInfoList(hDevInfo);
             }
@@ -217,70 +258,50 @@ namespace HardwareHelperLib
         //          tries to match the hardware description against the criteria
         //          passed in.  If a match is found, that device will the be
         //          enabled or disabled based on bEnable.
-        public bool SetDeviceState(string[] match, bool bEnable)
+        public bool SetDeviceState(DEVICE_INFO deviceToChangeState, bool bEnable)
         {
-            try
+            Guid myGUID = System.Guid.Empty;
+            IntPtr hDevInfo = Native.SetupDiGetClassDevs(ref myGUID, 0, IntPtr.Zero, Native.DIGCF_ALLCLASSES | Native.DIGCF_PRESENT);
+            if (hDevInfo.ToInt64() == Native.INVALID_HANDLE_VALUE)
+                throw new Exception("Could retrieve handle for device");
+
+            Native.SP_DEVINFO_DATA DeviceInfoData;
+            DeviceInfoData = new Native.SP_DEVINFO_DATA();
+
+            //for 32-bit, IntPtr.Size = 4
+            //for 64-bit, IntPtr.Size = 8
+            if (IntPtr.Size == 4)
+                DeviceInfoData.cbSize = 28;
+            else if (IntPtr.Size == 8)
+                DeviceInfoData.cbSize = 32;
+
+            //is devices exist for class
+            DeviceInfoData.devInst = 0;
+            DeviceInfoData.classGuid = System.Guid.Empty;
+            DeviceInfoData.reserved = 0;
+            UInt32 i;
+            StringBuilder DeviceHardwareId = new StringBuilder("");
+            StringBuilder DeviceFriendlyName = new StringBuilder("");
+            DeviceHardwareId.Capacity = DeviceFriendlyName.Capacity = Native.MAX_DEV_LEN;
+            for (i = 0; Native.SetupDiEnumDeviceInfo(hDevInfo, i, DeviceInfoData); i++)
             {
-                Guid myGUID = System.Guid.Empty;
-                IntPtr hDevInfo = Native.SetupDiGetClassDevs(ref myGUID, 0, IntPtr.Zero, Native.DIGCF_ALLCLASSES | Native.DIGCF_PRESENT);
-                if (hDevInfo.ToInt32() == Native.INVALID_HANDLE_VALUE)
+                //Declare vars
+                Native.SetupDiGetDeviceRegistryProperty(hDevInfo, DeviceInfoData, Native.SPDRP_HARDWAREID, 0, DeviceHardwareId, Native.MAX_DEV_LEN, IntPtr.Zero);
+                Native.SetupDiGetDeviceRegistryProperty(hDevInfo, DeviceInfoData, Native.SPDRP_FRIENDLYNAME, 0, DeviceFriendlyName, Native.MAX_DEV_LEN, IntPtr.Zero);
+
+                Console.WriteLine(DeviceHardwareId + " -- " + DeviceFriendlyName);
+                if (DeviceHardwareId.ToString().ToLower().Contains(deviceToChangeState.hardwareId.ToLower()) && DeviceFriendlyName.ToString().ToLower().Contains(deviceToChangeState.friendlyName.ToLower()))
                 {
-                    return false;
+                    Console.WriteLine("Found: " + DeviceFriendlyName);
+                    bool couldChangeState = ChangeIt(hDevInfo, DeviceInfoData, bEnable);
+                    if (!couldChangeState)
+                        throw new Exception("Unable to change " + DeviceFriendlyName + " device state, make sure you have administrator privileges");
+                    break;
                 }
-                Native.SP_DEVINFO_DATA DeviceInfoData;
-                DeviceInfoData = new Native.SP_DEVINFO_DATA();
-                //for 32-bit, IntPtr.Size = 4
-                //for 64-bit, IntPtr.Size = 8
-                if (IntPtr.Size == 4)
-                {
-                    DeviceInfoData.cbSize = 28;
-                }//if
-                else if (IntPtr.Size == 8)
-                {
-                    DeviceInfoData.cbSize = 32;
-                }//if
-                //is devices exist for class
-                DeviceInfoData.devInst = 0;
-                DeviceInfoData.classGuid = System.Guid.Empty;
-                DeviceInfoData.reserved = 0;
-                UInt32 i;
-                StringBuilder DeviceName = new StringBuilder("");
-                DeviceName.Capacity = Native.MAX_DEV_LEN;
-                for (i = 0; Native.SetupDiEnumDeviceInfo(hDevInfo, i, DeviceInfoData); i++)
-                {
-                    //Declare vars
-                    if (!Native.SetupDiGetDeviceRegistryProperty(hDevInfo,
-                                          DeviceInfoData,
-                                          Native.SPDRP_HARDWAREID,
-                                          0,
-                                          DeviceName,
-                                          Native.MAX_DEV_LEN,
-                                          IntPtr.Zero))
-                    {
-                        //Skip
-                        continue;
-                    }
-                    bool bMatch = true;
-                    foreach (string search in match)
-                    {
-                        if (!DeviceName.ToString().ToLower().Contains(search.ToLower()))
-                        {
-                            bMatch = false;
-                            break;
-                        }
-                    }
-                    if (bMatch)
-                    {
-                        ChangeIt(hDevInfo, DeviceInfoData, bEnable);
-                    }
-                }
-                Native.SetupDiDestroyDeviceInfoList(hDevInfo);
             }
-            catch (Exception ex)
-            {
-                throw new Exception("Failed to enumerate device tree!", ex);
-                return false;
-            }
+
+            Native.SetupDiDestroyDeviceInfoList(hDevInfo);
+
             return true;
         }
         //Name:     HookHardwareNotifications
@@ -375,7 +396,7 @@ namespace HardwareHelperLib
                     pcp.StateChange = Native.DICS_ENABLE;
                     pcp.Scope = Native.DICS_FLAG_GLOBAL;
                     pcp.HwProfile = 0;
-                    
+
                     //Marshal the params
                     szOfPcp = Marshal.SizeOf(pcp);
                     ptrToPcp = Marshal.AllocHGlobal(szOfPcp);
@@ -407,21 +428,16 @@ namespace HardwareHelperLib
                 Marshal.StructureToPtr(pcp, ptrToPcp, true);
                 szDevInfoData = Marshal.SizeOf(devInfoData);
                 ptrToDevInfoData = Marshal.AllocHGlobal(szDevInfoData);
-                Marshal.StructureToPtr(devInfoData, ptrToDevInfoData,true);
+                Marshal.StructureToPtr(devInfoData, ptrToDevInfoData, true);
 
                 bool rslt1 = Native.SetupDiSetClassInstallParams(hDevInfo, ptrToDevInfoData, ptrToPcp, Marshal.SizeOf(typeof(Native.SP_PROPCHANGE_PARAMS)));
                 bool rstl2 = Native.SetupDiCallClassInstaller(Native.DIF_PROPERTYCHANGE, hDevInfo, ptrToDevInfoData);
                 if ((!rslt1) || (!rstl2))
-                {
                     throw new Exception("Unable to change device state!");
-                    return false;
-                }
                 else
-                {
                     return true;
-                }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return false;
             }

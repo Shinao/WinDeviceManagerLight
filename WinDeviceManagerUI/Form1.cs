@@ -36,7 +36,7 @@ namespace HW_Lib_Test
             listdevices.Items.Clear();
             foreach (var device in HardwareList)
             {
-                ListViewItem lvi = new ListViewItem(new string[] { device.name, device.friendlyName, device.hardwareId });
+                ListViewItem lvi = new ListViewItem(new string[] { device.name, device.friendlyName, device.hardwareId, device.status.ToString() });
                 listdevices.Items.Add(lvi);
             }
             label1.Text = HardwareList.Count.ToString() + " Devices Attached";
@@ -115,14 +115,15 @@ namespace HW_Lib_Test
             if (listdevices.SelectedIndices.Count == 0)
                 return;
 
-            //Enable
-            string[] devices = new string[1];
             hwh.CutLooseHardwareNotifications(this.Handle);
-            var hardwareId = HardwareList[listdevices.SelectedIndices[0]].hardwareId;
-            if (string.IsNullOrEmpty(hardwareId))
-                return;
-            devices[0] = hardwareId;
-            hwh.SetDeviceState(devices, true);
+            try
+            {
+                hwh.SetDeviceState(HardwareList[listdevices.SelectedIndices[0]], true);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK);
+            }
             hwh.HookHardwareNotifications(this.Handle, true);
         }
         //Name:     button2_Clck
@@ -135,14 +136,16 @@ namespace HW_Lib_Test
             if (listdevices.SelectedIndices.Count == 0)
                 return;
 
-            //Disable
-            string[] devices = new string[1];
             hwh.CutLooseHardwareNotifications(this.Handle);
-            var hardwareId = HardwareList[listdevices.SelectedIndices[0]].hardwareId;
-            if (string.IsNullOrEmpty(hardwareId))
-                return;
-            devices[0] = hardwareId;
-            hwh.SetDeviceState(devices, false);
+
+            try
+            {
+                hwh.SetDeviceState(HardwareList[listdevices.SelectedIndices[0]], false);
+            } catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK);
+            }
+
             hwh.HookHardwareNotifications(this.Handle, true);
         }
 
