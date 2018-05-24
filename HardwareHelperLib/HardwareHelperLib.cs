@@ -82,7 +82,7 @@ namespace HardwareHelperLib
         {
             public int cbSize;
             public Guid classGuid;
-            public int devInst;
+            public uint devInst;
             public ulong reserved;
         };
 
@@ -236,8 +236,8 @@ namespace HardwareHelperLib
                     UInt32 status, problem;
                     string dstatustr = "";
                     DeviceStatus deviceStatus = DeviceStatus.Unknown;
-                    if (Native.CM_Get_DevNode_Status(out status, out problem, i, 0) == Native.CR_SUCCESS)
-                        deviceStatus = ((status & Native.DN_DISABLEABLE) > 0) ? DeviceStatus.Enabled : DeviceStatus.Disabled;
+                    if (Native.CM_Get_DevNode_Status(out status, out problem, DeviceInfoData.devInst, 0) == Native.CR_SUCCESS)
+                        deviceStatus = ((status & Native.DN_STARTED) > 0) ? DeviceStatus.Enabled : DeviceStatus.Disabled;
 
                     HWList.Add(new DEVICE_INFO { name = DeviceName.ToString(), friendlyName = DeviceFriendlyName.ToString(), hardwareId = DeviceHardwareId.ToString(), status = deviceStatus, statusstr = dstatustr });
                 }
