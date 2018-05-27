@@ -285,6 +285,8 @@ namespace HardwareHelperLib
             DeviceHardwareId.Capacity = DeviceFriendlyName.Capacity = Native.MAX_DEV_LEN;
             for (i = 0; Native.SetupDiEnumDeviceInfo(hDevInfo, i, DeviceInfoData); i++)
             {
+                DeviceFriendlyName.Length = DeviceHardwareId.Length = 0;
+
                 //Declare vars
                 Native.SetupDiGetDeviceRegistryProperty(hDevInfo, DeviceInfoData, Native.SPDRP_HARDWAREID, 0, DeviceHardwareId, Native.MAX_DEV_LEN, IntPtr.Zero);
                 Native.SetupDiGetDeviceRegistryProperty(hDevInfo, DeviceInfoData, Native.SPDRP_FRIENDLYNAME, 0, DeviceFriendlyName, Native.MAX_DEV_LEN, IntPtr.Zero);
