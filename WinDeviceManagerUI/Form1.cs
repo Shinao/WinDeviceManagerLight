@@ -153,7 +153,11 @@ namespace HW_Lib_Test
 
         private void FilterDevices(string key)
         {
+            this.ReloadHardwareList();
 
+            foreach (ListViewItem item in this.listdevices.Items)
+                if (item.Text.IndexOf(key) == -1)
+                    this.listdevices.Items.Remove(item);
         }
 
         private void searchButton_Click(object sender, EventArgs e) => this.FilterDevices(this.searchTextBox.Text);
