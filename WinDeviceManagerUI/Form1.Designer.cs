@@ -38,7 +38,7 @@ namespace HW_Lib_Test
             this.HardwareId = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.listdevices = new System.Windows.Forms.ListView();
             this.Status = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.searchTextBox = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // button1
@@ -116,21 +116,22 @@ namespace HW_Lib_Test
             this.Status.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.Status.Width = 93;
             // 
-            // textBox1
+            // searchTextBox
             // 
-            this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.searchTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox1.Location = new System.Drawing.Point(147, 10);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(745, 20);
-            this.textBox1.TabIndex = 6;
+            this.searchTextBox.Location = new System.Drawing.Point(147, 10);
+            this.searchTextBox.Name = "searchTextBox";
+            this.searchTextBox.Size = new System.Drawing.Size(745, 20);
+            this.searchTextBox.TabIndex = 6;
+            this.searchTextBox.Text = "Search";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(922, 763);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.searchTextBox);
             this.Controls.Add(this.listdevices);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.button2);
@@ -153,7 +154,7 @@ namespace HW_Lib_Test
         private System.Windows.Forms.ColumnHeader HardwareId;
         private System.Windows.Forms.ListView listdevices;
         private System.Windows.Forms.ColumnHeader Status;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox searchTextBox;
     }
 }
 

@@ -49,6 +49,8 @@ namespace HW_Lib_Test
         //          device is added or removed.
         private void Form1_Load(object sender, EventArgs e)
         {
+            this.ActiveControl = this.searchTextBox;
+
             ReloadHardwareList();
 
             hwh.HookHardwareNotifications(this.Handle, true);
