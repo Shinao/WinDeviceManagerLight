@@ -28,8 +28,8 @@ namespace HW_Lib_Test
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem("");
-            System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem("");
+            System.Windows.Forms.ListViewItem listViewItem19 = new System.Windows.Forms.ListViewItem("");
+            System.Windows.Forms.ListViewItem listViewItem20 = new System.Windows.Forms.ListViewItem("");
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
@@ -102,8 +102,8 @@ namespace HW_Lib_Test
             this.listdevices.FullRowSelect = true;
             this.listdevices.HideSelection = false;
             this.listdevices.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem3,
-            listViewItem4});
+            listViewItem19,
+            listViewItem20});
             this.listdevices.Location = new System.Drawing.Point(34, 36);
             this.listdevices.MultiSelect = false;
             this.listdevices.Name = "listdevices";
@@ -122,11 +122,12 @@ namespace HW_Lib_Test
             // 
             this.searchTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.searchTextBox.Location = new System.Drawing.Point(147, 10);
+            this.searchTextBox.Location = new System.Drawing.Point(166, 10);
             this.searchTextBox.Name = "searchTextBox";
-            this.searchTextBox.Size = new System.Drawing.Size(583, 20);
+            this.searchTextBox.Size = new System.Drawing.Size(564, 20);
             this.searchTextBox.TabIndex = 6;
             this.searchTextBox.Text = "Search";
+            this.searchTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.searchTextBox_KeyDown);
             // 
             // searchButton
             // 
@@ -137,6 +138,7 @@ namespace HW_Lib_Test
             this.searchButton.TabIndex = 7;
             this.searchButton.Text = "Search";
             this.searchButton.UseVisualStyleBackColor = true;
+            this.searchButton.Click += new System.EventHandler(this.searchButton_Click);
             // 
             // ShowAllButton
             // 
@@ -147,6 +149,7 @@ namespace HW_Lib_Test
             this.ShowAllButton.TabIndex = 8;
             this.ShowAllButton.Text = "ShowAll";
             this.ShowAllButton.UseVisualStyleBackColor = true;
+            this.ShowAllButton.Click += new System.EventHandler(this.ShowAllButton_Click);
             // 
             // Form1
             // 

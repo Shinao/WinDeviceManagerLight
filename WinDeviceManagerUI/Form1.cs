@@ -150,5 +150,16 @@ namespace HW_Lib_Test
 
             hwh.HookHardwareNotifications(this.Handle, true);
         }
+
+        private void FilterDevices(string key)
+        {
+
+        }
+
+        private void searchButton_Click(object sender, EventArgs e) => this.FilterDevices(this.searchTextBox.Text);
+
+        private void searchTextBox_KeyDown(object sender, KeyEventArgs e) { if (e.KeyCode == Keys.Enter) searchButton.PerformClick(); }
+
+        private void ShowAllButton_Click(object sender, EventArgs e) => this.FilterDevices("");
     }
 }
