@@ -28,8 +28,8 @@ namespace HW_Lib_Test
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem("");
-            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("");
+            System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem("");
+            System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem("");
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
@@ -39,6 +39,8 @@ namespace HW_Lib_Test
             this.listdevices = new System.Windows.Forms.ListView();
             this.Status = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.searchTextBox = new System.Windows.Forms.TextBox();
+            this.searchButton = new System.Windows.Forms.Button();
+            this.ShowAllButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // button1
@@ -100,8 +102,8 @@ namespace HW_Lib_Test
             this.listdevices.FullRowSelect = true;
             this.listdevices.HideSelection = false;
             this.listdevices.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem1,
-            listViewItem2});
+            listViewItem3,
+            listViewItem4});
             this.listdevices.Location = new System.Drawing.Point(34, 36);
             this.listdevices.MultiSelect = false;
             this.listdevices.Name = "listdevices";
@@ -122,15 +124,37 @@ namespace HW_Lib_Test
             | System.Windows.Forms.AnchorStyles.Right)));
             this.searchTextBox.Location = new System.Drawing.Point(147, 10);
             this.searchTextBox.Name = "searchTextBox";
-            this.searchTextBox.Size = new System.Drawing.Size(745, 20);
+            this.searchTextBox.Size = new System.Drawing.Size(583, 20);
             this.searchTextBox.TabIndex = 6;
             this.searchTextBox.Text = "Search";
+            // 
+            // searchButton
+            // 
+            this.searchButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.searchButton.Location = new System.Drawing.Point(736, 9);
+            this.searchButton.Name = "searchButton";
+            this.searchButton.Size = new System.Drawing.Size(75, 22);
+            this.searchButton.TabIndex = 7;
+            this.searchButton.Text = "Search";
+            this.searchButton.UseVisualStyleBackColor = true;
+            // 
+            // ShowAllButton
+            // 
+            this.ShowAllButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ShowAllButton.Location = new System.Drawing.Point(817, 9);
+            this.ShowAllButton.Name = "ShowAllButton";
+            this.ShowAllButton.Size = new System.Drawing.Size(75, 22);
+            this.ShowAllButton.TabIndex = 8;
+            this.ShowAllButton.Text = "ShowAll";
+            this.ShowAllButton.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(922, 763);
+            this.Controls.Add(this.ShowAllButton);
+            this.Controls.Add(this.searchButton);
             this.Controls.Add(this.searchTextBox);
             this.Controls.Add(this.listdevices);
             this.Controls.Add(this.label1);
@@ -155,6 +179,8 @@ namespace HW_Lib_Test
         private System.Windows.Forms.ListView listdevices;
         private System.Windows.Forms.ColumnHeader Status;
         private System.Windows.Forms.TextBox searchTextBox;
+        private System.Windows.Forms.Button searchButton;
+        private System.Windows.Forms.Button ShowAllButton;
     }
 }
 
