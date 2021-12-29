@@ -28,8 +28,8 @@ namespace HW_Lib_Test
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem("");
-            System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem("");
+            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem("");
+            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("");
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
@@ -100,8 +100,8 @@ namespace HW_Lib_Test
             this.listdevices.FullRowSelect = true;
             this.listdevices.HideSelection = false;
             this.listdevices.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem3,
-            listViewItem4});
+            listViewItem1,
+            listViewItem2});
             this.listdevices.Location = new System.Drawing.Point(34, 36);
             this.listdevices.MultiSelect = false;
             this.listdevices.Name = "listdevices";
@@ -109,7 +109,6 @@ namespace HW_Lib_Test
             this.listdevices.TabIndex = 5;
             this.listdevices.UseCompatibleStateImageBehavior = false;
             this.listdevices.View = System.Windows.Forms.View.Details;
-            this.listdevices.SelectedIndexChanged += new System.EventHandler(this.listdevices_SelectedIndexChanged);
             // 
             // Status
             // 

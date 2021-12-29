@@ -148,10 +148,5 @@ namespace HW_Lib_Test
 
             hwh.HookHardwareNotifications(this.Handle, true);
         }
-
-        private void listdevices_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
     }
 }
