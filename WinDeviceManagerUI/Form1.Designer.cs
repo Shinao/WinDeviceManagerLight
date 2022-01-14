@@ -28,8 +28,8 @@ namespace HW_Lib_Test
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.ListViewItem listViewItem19 = new System.Windows.Forms.ListViewItem("");
-            System.Windows.Forms.ListViewItem listViewItem20 = new System.Windows.Forms.ListViewItem("");
+            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem("");
+            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("");
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
@@ -102,8 +102,8 @@ namespace HW_Lib_Test
             this.listdevices.FullRowSelect = true;
             this.listdevices.HideSelection = false;
             this.listdevices.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem19,
-            listViewItem20});
+            listViewItem1,
+            listViewItem2});
             this.listdevices.Location = new System.Drawing.Point(34, 36);
             this.listdevices.MultiSelect = false;
             this.listdevices.Name = "listdevices";
@@ -126,7 +126,6 @@ namespace HW_Lib_Test
             this.searchTextBox.Name = "searchTextBox";
             this.searchTextBox.Size = new System.Drawing.Size(564, 20);
             this.searchTextBox.TabIndex = 6;
-            this.searchTextBox.Text = "Search";
             this.searchTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.searchTextBox_KeyDown);
             // 
             // searchButton

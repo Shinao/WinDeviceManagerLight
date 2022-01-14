@@ -39,6 +39,9 @@ namespace HW_Lib_Test
                 ListViewItem lvi = new ListViewItem(new string[] { device.name, device.friendlyName, device.hardwareId, device.status.ToString() });
                 listdevices.Items.Add(lvi);
             }
+
+            FilterDevices();
+
             label1.Text = HardwareList.Count.ToString() + " Devices Attached";
         }
         //Name:     Form1_Load()
@@ -143,7 +146,7 @@ namespace HW_Lib_Test
             try
             {
                 hwh.SetDeviceState(HardwareList[listdevices.SelectedIndices[0]], false);
-            } catch(Exception ex)
+            } catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK);
             }
@@ -151,19 +154,26 @@ namespace HW_Lib_Test
             hwh.HookHardwareNotifications(this.Handle, true);
         }
 
-        private void FilterDevices(string key)
+        private void FilterDevices()
         {
-            this.ReloadHardwareList();
+            if (this.searchTextBox.Text == "")
+                return;
 
-            foreach (ListViewItem item in this.listdevices.Items)
-                if (item.Text.IndexOf(key) == -1)
-                    this.listdevices.Items.Remove(item);
+            for (int index = 0; index < this.listdevices.Items.Count; index++)
+            {
+                if (this.listdevices.Items[index].Text.IndexOf(this.searchTextBox.Text) == -1)
+                {
+                    HardwareList.RemoveAt(index);
+                    this.listdevices.Items.RemoveAt(index);
+                    index--;
+                }
+            }
         }
 
-        private void searchButton_Click(object sender, EventArgs e) => this.FilterDevices(this.searchTextBox.Text);
+        private void searchButton_Click(object sender, EventArgs e) => this.ReloadHardwareList();
 
         private void searchTextBox_KeyDown(object sender, KeyEventArgs e) { if (e.KeyCode == Keys.Enter) searchButton.PerformClick(); }
 
-        private void ShowAllButton_Click(object sender, EventArgs e) => this.FilterDevices("");
+        private void ShowAllButton_Click(object sender, EventArgs e) { this.searchTextBox.Text = ""; this.ReloadHardwareList(); }
     }
 }
