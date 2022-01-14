@@ -49,6 +49,8 @@ namespace HW_Lib_Test
         //          device is added or removed.
         private void Form1_Load(object sender, EventArgs e)
         {
+            this.ActiveControl = this.searchTextBox;
+
             ReloadHardwareList();
 
             hwh.HookHardwareNotifications(this.Handle, true);
@@ -149,9 +151,19 @@ namespace HW_Lib_Test
             hwh.HookHardwareNotifications(this.Handle, true);
         }
 
-        private void listdevices_SelectedIndexChanged(object sender, EventArgs e)
+        private void FilterDevices(string key)
         {
+            this.ReloadHardwareList();
 
+            foreach (ListViewItem item in this.listdevices.Items)
+                if (item.Text.IndexOf(key) == -1)
+                    this.listdevices.Items.Remove(item);
         }
+
+        private void searchButton_Click(object sender, EventArgs e) => this.FilterDevices(this.searchTextBox.Text);
+
+        private void searchTextBox_KeyDown(object sender, KeyEventArgs e) { if (e.KeyCode == Keys.Enter) searchButton.PerformClick(); }
+
+        private void ShowAllButton_Click(object sender, EventArgs e) => this.FilterDevices("");
     }
 }
